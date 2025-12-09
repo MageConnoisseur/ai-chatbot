@@ -47,3 +47,4 @@ def stop_thinking_timer(root, output_text, thinking_state):
             output_text.delete(ranges[0], ranges[1])
         except tk.TclError:
             pass
+

@@ -19,3 +19,4 @@ def clear_conversation(root, w):
 
     #clear UI
     w["output_text"].delete("1.0", "end")
+    

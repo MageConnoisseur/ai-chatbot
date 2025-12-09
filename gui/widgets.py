@@ -114,3 +114,4 @@ def create_widgets(root):
     output_text.tag_config("code_separator", foreground="#8a8a8a", font=("Helvetica", 10, "italic"))
 
     return widgets
+

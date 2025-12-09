@@ -56,3 +56,4 @@ def load_conversation(output_text):
 
     except Exception as e:
         messagebox.showerror("Load Error", f"Failed to load conversation: {e}")
+

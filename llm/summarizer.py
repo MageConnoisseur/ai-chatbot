@@ -149,3 +149,4 @@ def trim_and_summarize_if_needed(max_messages, summarizer_model, output_text=Non
     t = threading.Thread(target=_thread, daemon=True)
     t.start()
 
+

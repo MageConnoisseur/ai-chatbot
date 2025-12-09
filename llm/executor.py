@@ -209,3 +209,4 @@ def insert_model_reply_with_code(text_widget, reply):
             code_buffer.append(line)
         else:
             text_widget.insert("end", line + "\n", "assistant_text")
+            
