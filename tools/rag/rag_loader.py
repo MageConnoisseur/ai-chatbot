@@ -44,3 +44,4 @@ def read_file_content(filepath):
     except Exception as e:
         print(f"Failed to read {filepath}: {e}")
         return "" # or raise the exception if you want to halt execution
+    
