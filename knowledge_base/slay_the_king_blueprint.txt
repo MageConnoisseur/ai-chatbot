@@ -1,0 +1,29 @@
+Core Gameplay Loops
+Have a branching map with different interactions
+Tavern: Recruiting more pieces
+Campfire: Earn more points / heal
+Market/Trade: trade per round points for artifacts that make you permanently stronger
+Elite fights: Harder fights that reward you with permanent artifacts that make you stronger the rest of the run.  
+Rougelite aspect
+I want the player to get stronger by recruiting pieces and getting stronger through gaining more points.  
+I want it to be a empire sim in the sense that your kingdom earns gold, and the gold is spent on equipment or artifacts that make your pieces stronger, and I want manpower points (name pending) that can be used per round and stronger pieces use more of these points. 
+You can earn bonus gold and points through different events as outlined in the branching map section above
+Also I want there to be an interest system if you save gold
+
+
+
+
+
+Custom Piece Ideas:
+A jester piece: Not super mobile, probably similar movement to a pawn, but when it gets captured, it has a certain percentage chance to recapture the piece that captured it.  
+Sniper/Ranger: Not super mobile, but can attack 1 to the side and all the way down the board,  this is to counter pieces like the queen and rook so it can attack them without being threatened itself.  It can’t attack horizontally, and can only move 1 space horizontally or vertically when not attacking.
+Diagonal Variation? – What if an artifact expanded its attack range to include diagonal shots, adding a late-game upgrade potential? 
+Wizard: A piece that can attack diagonally like a bishop, but teleports back to his initial position after capturing.
+Blink Scroll – Lets the Wizard teleport to any square along its attacking instead of its initial position. 
+Shieldman: Can not be attacked from straight ahead.
+
+
+
+Custom Terrain / Board Ideas:
+Rocks that act as a sight block and interact with different pieces in different ways.
+Portals, let pieces move through them, there will be 2 portals on the map, and it gives pieces sight lines. Knights if jumping into portal can jump the same way out of portal.
