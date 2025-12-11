@@ -4,6 +4,9 @@ knowledge_base/docs/
 # Ignore embeddings folder completely
 knowledge_base/embeddings/
 
+# Ignore Conversation Files
+knowledge_base/conversations/
+
 # Ignore Python cache folders
 __pycache__/
 *.pyc
