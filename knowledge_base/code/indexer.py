@@ -6,7 +6,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(".")  # index everything in your repo
 
 SKIP_FOLDERS = [
-    "Conversation Save Files",
+    "conversation_save_files",
     "chat_logs",
     "logs",
     "venv",
