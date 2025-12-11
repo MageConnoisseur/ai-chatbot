@@ -1,5 +1,6 @@
 from memory.conversation import conversation_messages, loaded_history
 from tools.rag.rag_search import simple_search
+from knowledge_base.code.retriever import retrieve, format_for_prompt
 """
 Constructs a single prompt string from loaded_history and conversation_messages.
 Formated like:
@@ -14,12 +15,10 @@ Code Blocks are wrapped in ```code...  ```
 def build_prompt_for_model(user_prompt: str):
     parts = []
 
-    retrieved_docs = simple_search(user_prompt)
+    results = retrieve(user_prompt, top_k_ret=5)
 
-    context = ""
-    for doc in retrieved_docs:
-        context += f"\n--- {doc['filename']} ---\n"
-        context += doc["content"][:2000] #include only first 2000 chars
+    context = format_for_prompt(results, char_length=1500)
+    
 
     parts.append(f"Use the following context to answer the question IF HELPFUL:\n {context}\n")
 
