@@ -14,7 +14,7 @@ Code Blocks are wrapped in ```code...  ```
 
 def build_prompt_for_model(user_prompt: str):
     parts = []
-
+    
     results = retrieve(user_prompt, top_k_ret=5)
 
     context = format_for_prompt(results, char_length=1500)

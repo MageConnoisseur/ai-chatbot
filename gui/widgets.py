@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext, font
 from llm.models import MODELS, DEFAULT_MAX_MESSAGES, AUTO_SUMMARIZE
 
-def create_widgets(root):
+def create_widgets(root) -> dict:
     widgets = {}
 
 
@@ -73,6 +73,11 @@ def create_widgets(root):
     #Clear Conversation Button
     widgets["clear_btn"] = tk.Button(btn_row, text = "Clear Conversation")
     widgets["clear_btn"].pack(side = "left", padx = 6)
+
+    #Manually index through files Button
+    widgets["man_index_btn"] = tk.Button(btn_row, text = "Index Files")
+    widgets["man_index_btn"].pack(side="left", padx = 6)
+
 
 
     '''
