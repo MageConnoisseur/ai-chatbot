@@ -21,7 +21,7 @@ def start_thinking_timer(root, output_text):
 
         elapsed = int(time.time() - state["start"])
         output_text.insert(tk.END, f"Thinking... {elapsed} seconds\n", "thinking")
-        output_text.see(tk.END)
+        #output_text.see(tk.END)
 
         state["id"] = root.after(1000, update)
 

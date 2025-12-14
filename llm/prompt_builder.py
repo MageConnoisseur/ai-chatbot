@@ -1,6 +1,7 @@
 from memory.conversation import conversation_messages, loaded_history
 from tools.rag.rag_search import simple_search
 from knowledge_base.code.retriever import retrieve, format_for_prompt
+from llm.rag_logic import determine_rag_necessity
 """
 Constructs a single prompt string from loaded_history and conversation_messages.
 Formated like:
@@ -14,11 +15,15 @@ Code Blocks are wrapped in ```code...  ```
 
 def build_prompt_for_model(user_prompt: str):
     parts = []
-    
+    """
+    if determine_rag_necessity(user_prompt):
+        results = retrieve(user_prompt, top_k_ret=5)
+
+        context = format_for_prompt(results, char_length=1500)
+    """
     results = retrieve(user_prompt, top_k_ret=5)
 
     context = format_for_prompt(results, char_length=1500)
-    
 
     parts.append(f"Use the following context to answer the question IF HELPFUL:\n {context}\n")
 
@@ -42,7 +47,7 @@ def build_prompt_for_model(user_prompt: str):
         else:
             #normal text line
             if role == "USER":
-                parts.append(f"User: {content}\n")
+                parts.append(f"User:\n{content}\n")
             elif role == "ASSISTANT":
                 parts.append(f"Assistant: {content}\n")
             else:

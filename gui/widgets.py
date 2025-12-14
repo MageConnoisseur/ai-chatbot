@@ -104,6 +104,10 @@ def create_widgets(root) -> dict:
     output_text.tag_config("assistant_text", font=assistant_font, foreground="#2d7d46")
     # Thinking text tag
     output_text.tag_config("thinking", font=user_font, foreground="gray")
+
+    # Loaded History tags
+    output_text.tag_config("user_history", font=user_font, foreground ="#1558b0")
+    output_text.tag_config("assistant_history", font = assistant_font, foreground="#34a853")
     
     # spacer tag (just a blank line)
     output_text.tag_config("spacer", font=user_font)
