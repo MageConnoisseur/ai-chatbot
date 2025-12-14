@@ -3,6 +3,7 @@ import subprocess
 import numpy as np
 import json
 import llm.models
+from pathlib import Path
 
 
 
@@ -43,27 +44,50 @@ def hueristic_checker(prompt:str) -> bool:
         
     return False
 
-def embedding_checker(prompt:str) -> bool:
-    #with open()
+def cosine_similarity(a, b):
+    dot_product = np.dot(a, b)
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    # Handle edge case where one vector has zero norm
+    if norm_a == 0 or norm_b == 0:
+        return 0.0
+    return dot_product / (norm_a * norm_b)
+
+def embedding_checker(prompt: str) -> bool:
     try:
         result = subprocess.run(
             ["ollama", "run", "embeddinggemma:300m", prompt],
             capture_output=True,
+            text=True,  
             check=True
         )
-        stdout = result.stdout.decode("utf-8").strip()
-
+        stdout = result.stdout.strip()
+        
     except subprocess.CalledProcessError as e:
-        return f"Error: {e.stderr}"
+        print(f"Error running Ollama: {e.stderr}")
+        return False  
     
     try:
         query_vector = np.array(json.loads(stdout))
-    except json.JSONDecodeError:
-        raise ValueError("Invalid JSON ins stdout from Ollama")
-
-    vector_file = Path("knowledge_base/embeddings/rag_check_vectors.json")
-    with vector_file.open("r", encoding="utf-8") as f:
-        reference_vector = np.array(json.load(f))
+    except json.JSONDecodeError as e:
+        print(f"Invalid JSON in stdout from Ollama: {e}")
+        return False
+    
+    vector_file = Path("knowledge_base/embeddings/rag_check_vectors.json")  
+    try:
+        with vector_file.open("r", encoding="utf-8") as f:
+            reference_vector = np.array(json.load(f))
+    except FileNotFoundError:
+        print(f"Reference vector file not found: {vector_file}")
+        return False
+    except json.JSONDecodeError as e:
+        print(f"Invalid JSON in reference vector file: {e}")
+        return False
+    
+    similarity = cosine_similarity(query_vector, reference_vector)
+    threshold = 0.5
+    
+    return similarity >= threshold
 
 
 # Test function with examples
