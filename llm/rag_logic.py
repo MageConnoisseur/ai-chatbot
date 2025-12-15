@@ -2,8 +2,6 @@
 import subprocess
 import numpy as np
 import json
-import llm.models
-from pathlib import Path
 
 
 
@@ -16,8 +14,11 @@ def determine_rag_necessity(prompt: str) -> bool:
 
     #simple heuristic checks for keywords that might indicate the need for RAG
     rag_necessity = hueristic_checker(prompt)
-
-    #rag_necessity =
+    if rag_necessity:
+        return rag_necessity
+    rag_necessity = embedding_checker(prompt)
+    return rag_necessity
+    
     
 
 
@@ -56,8 +57,10 @@ def cosine_similarity(a, b):
 def embedding_checker(prompt: str) -> bool:
     try:
         result = subprocess.run(
-            ["ollama", "run", "embeddinggemma:300m", prompt],
-            capture_output=True,
+            ["ollama", "run", "embeddinggemma:300m"],
+            input=prompt,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,  
             check=True
         )
@@ -73,12 +76,12 @@ def embedding_checker(prompt: str) -> bool:
         print(f"Invalid JSON in stdout from Ollama: {e}")
         return False
     
-    vector_file = Path("knowledge_base/embeddings/rag_check_vectors.json")  
+    vector_file_path= "knowledge_base/embeddings/rag_check_vectors.json"
     try:
-        with vector_file.open("r", encoding="utf-8") as f:
+        with open(vector_file_path, "r", encoding="utf-8") as f:
             reference_vector = np.array(json.load(f))
     except FileNotFoundError:
-        print(f"Reference vector file not found: {vector_file}")
+        print(f"Reference vector file not found: {vector_file_path}")
         return False
     except json.JSONDecodeError as e:
         print(f"Invalid JSON in reference vector file: {e}")
