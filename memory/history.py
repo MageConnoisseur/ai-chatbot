@@ -39,8 +39,6 @@ def load_conversation(output_text):
             data = json.load(f)
 
         # Clear existing memory
-        mem.conversation_messages.clear()
-        mem.loaded_history = ""
 
         # Load data
         mem.loaded_history = data.get("loaded_history", "")
@@ -51,8 +49,19 @@ def load_conversation(output_text):
 
         output_text.insert(
             "end",
-            f"[Loaded conversation from {filepath}]\n"
+            f"[Start loaded conversation from {filepath}]\n"
         )
+        for msg in loaded_msgs:
+            if msg.get("role") == "user":
+                output_text.insert("end", f"User:\n{msg.get('content','')}\n", "user_history")
+            elif msg.get("role") == "assistant":
+                output_text.insert("end", f"Assistant:\n{msg.get('content','')}\n", "assistant_history")
+
+        output_text.insert(
+            "end",
+            f"[End loaded conversation from {filepath}]\n"
+        )
+
 
     except Exception as e:
         messagebox.showerror("Load Error", f"Failed to load conversation: {e}")
