@@ -57,7 +57,10 @@ def fast_heuristic_checker(prompt:str) -> bool:
                             "tkinter", "unity", "c#", "script", 
                             "error", "traceback", "wizard", "piece", 
                             "movement", "teleport", "artifact",
-                            "game", "mechanic", "design", "lore"]
+                            "my game", "mechanic", "design", "lore",
+                            "my project", "my file", "my code", 
+                            "the document", "the code", "the unity project",
+                            "the python project", "the unity script"]
     for check in heuristic_check_list:
         if check in lower_prompt:
             print(f"Heuristic keyword detected: '{check}': using RAG.")

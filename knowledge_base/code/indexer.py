@@ -1,7 +1,9 @@
 import os
 import json
 import subprocess
+import PyPDF2
 from pathlib import Path
+
 
 PROJECT_ROOT = Path(".")  # index everything in your repo
 
@@ -20,7 +22,8 @@ INDEX_PATH = "knowledge_base/embeddings/index.json"
 #clarifying which extensions are allowed
 ALLOWED_EXTENSIONS = {
     ".py", ".txt", ".md", ".json", ".yaml", ".yml",
-    ".js", ".ts", ".html", ".css", ".c", ".cpp", ".java"
+    ".js", ".ts", ".html", ".css", ".c", ".cpp", ".java",
+    ".pdf"
 }
 
 #=============================================================
@@ -41,6 +44,22 @@ def embed_text(text):
         print("Embedding parse error:", e)
         return None
 
+#=============================================================
+#Function to extract text from PDF
+#=============================================================
+def extract_text_from_pdf(filepath):
+    """extract text from PDF file"""
+    try:
+        text = ""
+        with open(filepath, 'rb') as file:
+            reader = PyPDF2.PdfReader(file)
+            for page in reader.pages:
+                text += page.extract_text()
+            return text
+    except Exception as e:
+        print(f"Error extracting text from PDF {filepath}: {e}")
+        return None
+    
 #=============================================================
 #Auto chunker with chunk size
 #=============================================================
@@ -76,7 +95,13 @@ def index_files():
             print(f"Indexing: {filepath}")
 
             try:
-                text = filepath.read_text(errors="ignore")
+                if ext == ".pdf":
+                    text = extract_text_from_pdf(filepath)
+                else:
+                    text = filepath.read_text(errors="ignore")
+                if text is None or not text.strip():
+                    print(f"No text extracted from: {filepath}")
+                    continue
             except:
                 print(f"Could not read file: {filepath}")
                 continue
