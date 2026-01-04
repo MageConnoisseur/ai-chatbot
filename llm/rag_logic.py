@@ -4,9 +4,8 @@ import re
 import numpy as np
 import json
 
-
-RAG_SIMILARITY_THRESHOLD = 0.5 # Adjust this threshold based on empirical testing
-
+ # Adjust this threshold based on empirical testing
+RAG_CONFIDENCE_THRESHOLD = 0.10
 
 
 def determine_rag_necessity(prompt: str) -> bool:
@@ -34,14 +33,17 @@ def fast_heuristic_checker(prompt:str) -> bool:
 
     # Length check
     if len(prompt) > 1200:
+        print("Long prompt detected, requiring RAG.")
         return True
 
     # Code block present
     if "```" in prompt:
+        print("Code block detected, use RAG.")
         return True
 
     # File or path references
     if re.search(r"\.(py|cs|json|yaml|yml)", lower_prompt):
+        print("File detected in prompt, using RAG.")
         return True
 
 
@@ -58,6 +60,7 @@ def fast_heuristic_checker(prompt:str) -> bool:
                             "game", "mechanic", "design", "lore"]
     for check in heuristic_check_list:
         if check in lower_prompt:
+            print(f"Heuristic keyword detected: '{check}': using RAG.")
             return True
         
     return False
@@ -70,6 +73,7 @@ def is_definitely_non_rag(prompt: str) -> bool:
     lower = prompt.lower()
 
     if len(prompt) < 60:
+        print("Short prompt detected, skipping RAG.")
         return True
 
     casual_phrases = [
@@ -85,7 +89,12 @@ def is_definitely_non_rag(prompt: str) -> bool:
         "what is the meaning",
     ]
 
-    return any(p in lower for p in casual_phrases)
+
+    fast_check = any(p in lower for p in casual_phrases) 
+
+    if fast_check:
+        print("Casual phrase detected, skipping RAG.")
+        return fast_check
 
 
 def cosine_similarity(a, b):
@@ -100,6 +109,17 @@ def cosine_similarity(a, b):
 def normalize(v):
     norm = np.linalg.norm(v)
     return v if norm == 0 else v / norm
+
+def average_similarity(query_vec: np.ndarray, reference_vectors: list[np.ndarray]) -> float:
+    if not reference_vectors:
+        return 0.0
+
+    sims = [
+        cosine_similarity(query_vec, ref)
+        for ref in reference_vectors
+    ]
+    return sum(sims) / len(sims)
+
 
 def slow_embedding_checker(prompt: str) -> bool:
     try:
@@ -146,22 +166,28 @@ def slow_embedding_checker(prompt: str) -> bool:
         print(f"Invalid JSON in reference vector file: {e}")
         return False
     
+    rag_vectors = [
+        normalize(np.array(v, dtype=np.float32))
+        for v in data.get("rag_intent_vectors", [])
+    ]
+    
+    no_rag_vectors =[
+        normalize(np.array(v, dtype=np.float32))
+        for v in data.get("no_rag_intent_vectors", [])
+    ]
     
     query_vector = normalize(query_vector)
 
-    similarities = [
-        cosine_similarity(query_vector, normalize(ref))
-        for ref in reference_vectors
-]
+    rag_score = average_similarity(query_vector, rag_vectors)
+    no_rag_score = average_similarity(query_vector, no_rag_vectors)
 
-
-    if not reference_vectors:
-        print("No reference RAG vectors found")
-        return False
-
-    threshold = RAG_SIMILARITY_THRESHOLD
-    return max(similarities) >= threshold
-
+    confidence = rag_score - no_rag_score
+    print(f"RAG confidence score: {confidence:.4f}")
+    if confidence >= RAG_CONFIDENCE_THRESHOLD:
+        print("using slow embedding checker: Rag required.")
+    else:
+        print("using slow embedding checker: Rag NOT required.")
+    return confidence >= RAG_CONFIDENCE_THRESHOLD
 
 
 def prepare_for_embedding(prompt: str) -> str:
@@ -169,7 +195,7 @@ def prepare_for_embedding(prompt: str) -> str:
     Cleanes prompt up to eleminate noise for embedding
     """
     front_end_length = 500
-    back_end_length = 300
+    back_end_length = 350
 
     prompt = re.sub(r"```.*?```", "", prompt, flags=re.S)
 

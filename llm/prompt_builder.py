@@ -21,11 +21,11 @@ def build_prompt_for_model(user_prompt: str):
 
         context = format_for_prompt(results, char_length=1500)
     """
-    results = retrieve(user_prompt, top_k_ret=5)
+    if(determine_rag_necessity(user_prompt)):
+        results = retrieve(user_prompt, top_k_ret=5)
+        context = format_for_prompt(results, char_length=1500)
 
-    context = format_for_prompt(results, char_length=1500)
-
-    parts.append(f"Use the following context to answer the question IF HELPFUL:\n {context}\n")
+        parts.append(f"Use the following context to answer the question IF HELPFUL:\n {context}\n")
 
     if loaded_history:
         parts.append(f"[LOADED HISTORY START]\n{loaded_history}\n[LOADED HISTORY END]\n")
@@ -52,9 +52,10 @@ def build_prompt_for_model(user_prompt: str):
                 parts.append(f"Assistant: {content}\n")
             else:
                 parts.append(f"{role.capitalize()}: {content}\n")
+
     #append user prompt and assistant queue, then join parts and return
     parts.append("\nAssistant:")
-    print("\n".join(parts))
+    #print("\n".join(parts))
     return "\n".join(parts)
 
 
