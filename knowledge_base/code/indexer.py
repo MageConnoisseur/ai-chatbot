@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 FOLDERS_TO_ITERATE = [
-    Path("/home/mageconnoisseur/Documents/GitStuff/SlayTheKingRepo/Slay The King/Assets/Additions"),
+    Path("/home/mageconnoisseur/Documents/GitStuff/SlayTheKingRepo/Slay The King/Assets/Scripts"),
     Path(".")
     ] # index everything in your repo
 
