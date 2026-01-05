@@ -12,6 +12,7 @@ TRAINING_PROMPTS = [
     ("From what I shared earlier, explain the issue", True),
     ("Here's my error log.  Also, generally, why does this happen in Python?", True),
     ("I shared a design doc - what would you change, and explain SOLID principles", True),
+    ("I have a chatbot app with several features already. Any suggestions to improve it?", True)
 
 
     # NO RAG
@@ -24,4 +25,5 @@ TRAINING_PROMPTS = [
     ("What does this regex do: \\w+@\\w+\\.\\w+", False),
     ("Explain what a stack trace is", False),
     ("Write a Unity movement script from scratch", False),
+
 ]
