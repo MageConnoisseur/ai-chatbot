@@ -5,7 +5,10 @@ import PyPDF2
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(".")  # index everything in your repo
+FOLDERS_TO_ITERATE = [
+    Path("/home/mageconnoisseur/Documents/GitStuff/SlayTheKingRepo/Slay The King/Assets/Additions"),
+    Path(".")
+    ] # index everything in your repo
 
 SKIP_FOLDERS = [
     "conversation_save_files",
@@ -21,7 +24,7 @@ INDEX_PATH = "knowledge_base/embeddings/index.json"
 
 #clarifying which extensions are allowed
 ALLOWED_EXTENSIONS = {
-    ".py", ".txt", ".md", ".json", ".yaml", ".yml",
+    ".py", ".txt", ".md", ".json", ".yaml", ".yml", ".cs",
     ".js", ".ts", ".html", ".css", ".c", ".cpp", ".java",
     ".pdf"
 }
@@ -79,44 +82,45 @@ def index_files():
     all_chunks = []
 
     print("Walking project folders...\n")
+    for root_path in FOLDERS_TO_ITERATE:
+        print(f"Currently in {root_path} folder \n")
+        for root, dirs, files in os.walk(root_path):
 
-    for root, dirs, files in os.walk(PROJECT_ROOT):
-
-        # skip unwanted folders
-        if any(skip in root for skip in SKIP_FOLDERS):
-            continue
-
-        for filename in files:
-            ext = os.path.splitext(filename)[1].lower()
-            if ext not in ALLOWED_EXTENSIONS:
-                continue  # skip binary, images, etc.
-
-            filepath = Path(root) / filename
-            print(f"Indexing: {filepath}")
-
-            try:
-                if ext == ".pdf":
-                    text = extract_text_from_pdf(filepath)
-                else:
-                    text = filepath.read_text(errors="ignore")
-                if text is None or not text.strip():
-                    print(f"No text extracted from: {filepath}")
-                    continue
-            except:
-                print(f"Could not read file: {filepath}")
+            # skip unwanted folders
+            if any(skip in root for skip in SKIP_FOLDERS):
                 continue
 
-            chunks = chunk_text(text)
+            for filename in files:
+                ext = os.path.splitext(filename)[1].lower()
+                if ext not in ALLOWED_EXTENSIONS:
+                    continue  # skip binary, images, etc.
 
-            for i, chunk in enumerate(chunks):
-                embed = embed_text(chunk)
-                if embed:
-                    all_chunks.append({
-                        "id": f"{filepath}:{i}",
-                        "source": filename,
-                        "text": chunk,
-                        "embedding": embed
-                    })
+                filepath = Path(root) / filename
+                print(f"Indexing: {filepath}")
+
+                try:
+                    if ext == ".pdf":
+                        text = extract_text_from_pdf(filepath)
+                    else:
+                        text = filepath.read_text(errors="ignore")
+                    if text is None or not text.strip():
+                        print(f"No text extracted from: {filepath}")
+                        continue
+                except:
+                    print(f"Could not read file: {filepath}")
+                    continue
+
+                chunks = chunk_text(text)
+
+                for i, chunk in enumerate(chunks):
+                    embed = embed_text(chunk)
+                    if embed:
+                        all_chunks.append({
+                            "id": f"{filepath}:{i}",
+                            "source": filename,
+                            "text": chunk,
+                            "embedding": embed
+                        })
 
     # save output
     os.makedirs("knowledge_base/embeddings", exist_ok=True)
