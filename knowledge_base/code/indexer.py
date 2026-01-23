@@ -4,9 +4,9 @@ import subprocess
 import PyPDF2
 from pathlib import Path
 
+print("PATH:", os.environ.get("PATH"))
 
 FOLDERS_TO_ITERATE = [
-    Path("/home/mageconnoisseur/Documents/GitStuff/SlayTheKingRepo/Slay The King/Assets/Scripts"),
     Path(".")
     ] # index everything in your repo
 
@@ -21,6 +21,7 @@ SKIP_FOLDERS = [
 ]
 
 INDEX_PATH = "knowledge_base/embeddings/index.json"
+OLLAMA_PATH = "/usr/local/bin/ollama"
 
 #clarifying which extensions are allowed
 ALLOWED_EXTENSIONS = {
@@ -35,7 +36,7 @@ ALLOWED_EXTENSIONS = {
 def embed_text(text):
     """Send text to Ollama and return an embedding vector."""
     result = subprocess.run(
-        ["ollama", "run", "embeddinggemma:300m"],
+        [OLLAMA_PATH, "run", "embeddinggemma:300m"],
         input=text.encode("utf-8"),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
